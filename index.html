@@ -54,23 +54,23 @@
         }
 
         /* Buku Sharp/Kotak */
-       #scene { 
+      #scene { 
     width: 300px; 
     height: 400px; 
     transform-style: preserve-3d; 
-    /* Efek miring buku */
     transform: rotateX(-10deg) rotateY(-15deg); 
     display: none; 
     position: relative; 
     z-index: 10; 
 }
 
-/* KHUSUS TAMPILAN HP (BIAR GAK KEGEDEAN) */
 @media screen and (max-width: 600px) {
     #scene {
-        transform: rotateX(-10deg) rotateY(-15deg) scale(0.5); /* Kita ciutkan ke 70% */
-        margin-top: -20px; /* Geser dikit ke atas biar gak kepotong bawahnya */
+        width: 70vw; /* Pakai 70% lebar layar HP */
+        height: 100vw; /* Tinggi menyesuaikan */
+        transform: rotateX(-10deg) rotateY(-15deg); /* Hapus scale-nya */
     }
+}
 }
         .book { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; }
 
@@ -221,6 +221,7 @@
     </script>
 </body>
 </html>
+
 
 
 
