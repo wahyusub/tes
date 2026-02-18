@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For You - Complete Edition</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        :root { --pink: #ff85a2; --hot-pink: #d63384; --dark: #0a0a0a; --soft-pink: #fff0f3; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            background: var(--dark); 
+            height: 100vh; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            overflow: hidden; 
+            perspective: 2000px; 
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* --- BACKGROUND HATI (DIPASTIKAN MUNCUL) --- */
+        .heart { 
+            position: absolute; 
+            pointer-events: none; 
+            z-index: 1; /* Di atas background, di bawah buku */
+            user-select: none;
+        }
+        @keyframes fall {
+            0% { transform: translateY(-10vh) rotate(0deg) scale(0.5); opacity: 0; }
+            20% { opacity: 0.8; }
+            100% { transform: translateY(110vh) rotate(360deg) scale(1.2); opacity: 0; }
+        }
+        @keyframes floatUp {
+            0% { transform: translateY(110vh) rotate(0deg) scale(0.5); opacity: 0; }
+            20% { opacity: 0.6; }
+            100% { transform: translateY(-10vh) rotate(-360deg) scale(1.5); opacity: 0; }
+        }
+
+        /* Overlay & Countdown */
+        #overlay { 
+            position: fixed; inset: 0; background: var(--dark); 
+            z-index: 100; display: flex; flex-direction: column; 
+            align-items: center; justify-content: center; color: white; text-align: center; 
+        }
+        #timer { font-size: 2rem; font-weight: 600; color: var(--pink); margin: 20px 0; }
+        
+        .btn-start { 
+            background: var(--hot-pink); color: white; border: none; padding: 15px 40px; 
+            border-radius: 50px; cursor: pointer; font-weight: 600; display: none;
+            box-shadow: 0 0 20px var(--hot-pink); z-index: 101;
+        }
+
+        /* Buku Sharp/Kotak */
+        #scene { width: 300px; height: 400px; transform-style: preserve-3d; transform: rotateX(-10deg) rotateY(-15deg); display: none; position: relative; z-index: 10; }
+        .book { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; }
+
+        .page {
+            position: absolute; width: 100%; height: 100%; top: 0; left: 0;
+            transform-origin: left; transition: 1.5s cubic-bezier(0.645, 0.045, 0.355, 1);
+            transform-style: preserve-3d; cursor: pointer; border-radius: 0;
+        }
+        .page-front, .page-back {
+            position: absolute; width: 100%; height: 100%; backface-visibility: hidden;
+            display: flex; align-items: center; justify-content: center; flex-direction: column;
+            border-radius: 0; border: 1px solid rgba(255,255,255,0.1);
+        }
+        .page-back { background: #ffffff; transform: rotateY(180deg); box-shadow: inset 10px 0 20px rgba(0,0,0,0.05); }
+
+        .p-1 { z-index: 3; } .p-2 { z-index: 2; } .p-3 { z-index: 1; }
+        .cover-front { 
+            background: var(--soft-pink); border: 8px solid white;
+            background-image: radial-gradient(var(--pink) 15%, transparent 15%); background-size: 30px 30px;
+        }
+        .cover-box { background: rgba(255,255,255,0.9); padding: 15px; border: 2px dashed var(--hot-pink); text-align: center; }
+        .photo-front { background: #fdfdfd; }
+        .photo-frame { width: 80%; height: 70%; border: 8px solid white; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .base-page { background: white; padding: 25px; text-align: left; }
+        .open { transform: rotateY(-165deg); }
+    </style>
+</head>
+<body>
+
+    <div id="overlay">
+        <h2 style="font-family:'Dancing Script'; font-size: 1.8rem; color: var(--hot-pink);">Ditunggu dulu cantikku..</h2>
+        <div id="timer">00:00:00:00</div>
+        <button class="btn-start" id="btnBuka" onclick="start()">Buka Surat ✨</button>
+    </div>
+    
+    <audio id="mySong" loop><source src="musik.mp3" type="audio/mpeg"></audio>
+
+    <div id="scene">
+        <div class="book">
+            <div class="page p-3 base-page">
+                <h3 id="type-title" style="font-family:'Dancing Script'; color:var(--hot-pink); font-size:1.5rem;"></h3>
+                <p id="type-msg" style="line-height:1.5; margin-top:10px; font-size:0.8rem; color:#333;"></p>
+                <p style="margin-top:20px; font-size: 1.2rem;">🌸💖✨</p>
+            </div>
+            <div class="page p-2" id="pg2" onclick="turn(2)">
+                <div class="page-front photo-front">
+                    <div class="photo-frame"><img src="foto.jpg" style="width:100%; height:100%; object-fit:cover;"></div>
+                    <p style="color:var(--pink); font-size:0.6rem; margin-top:10px;">Klik untuk kejutan... 👇</p>
+                </div>
+                <div class="page-back"></div>
+            </div>
+            <div class="page p-1" id="pg1" onclick="turn(1)">
+                <div class="page-front cover-front">
+                    <div class="cover-box">
+                        <h2 style="font-family:'Dancing Script'; color:var(--hot-pink); font-size:1.6rem;">Untuk Ebyku Sayang 🌸</h2>
+                        <p style="font-size:0.6rem; color:#888; margin-top:5px;">Sentuh dong!</p>
+                    </div>
+                </div>
+                <div class="page-back"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // SET TARGET WAKTU (Ganti tanggalnya di sini)
+        const targetDate = new Date("Feb 18, 2026 00:00:00").getTime();
+
+        // Bikin hati tetap jalan pas countdown
+        setInterval(() => createHeart('fall'), 500);
+
+        const x = setInterval(function() {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById("timer").innerHTML = days + "d " + hours + "h " + minutes + "m " + seconds + "s ";
+
+            if (distance < 0) {
+                clearInterval(x);
+                document.getElementById("timer").style.display = "none";
+                document.querySelector("h2").innerHTML = "dipencet dong sayangg!";
+                document.getElementById("btnBuka").style.display = "block";
+            }
+        }, 1000);
+
+        function start() {
+            document.getElementById('overlay').style.display = 'none';
+            const audio = document.getElementById('mySong');
+            audio.currentTime = 176; // Menit Reff
+            audio.play();
+            document.getElementById('scene').style.display = 'block';
+            setInterval(() => createHeart('floatUp'), 600);
+        }
+
+        function createHeart(type) {
+            const h = document.createElement('div');
+            h.className = 'heart';
+            h.innerHTML = Math.random() > 0.5 ? '❤️' : '💖';
+            h.style.left = Math.random() * 100 + 'vw';
+            h.style.fontSize = Math.random() * 20 + 10 + 'px';
+            h.style.animation = `${type} ${Math.random() * 3 + 4}s linear forwards`;
+            document.body.appendChild(h);
+            setTimeout(() => h.remove(), 6000);
+        }
+
+        // Kontrol Rotasi
+        let rx = -10, ry = -15, isDown = false, sx, sy;
+        window.onmousedown = e => { isDown = true; sx = e.clientX; sy = e.clientY; };
+        window.onmousemove = e => {
+            if(!isDown) return;
+            ry += (e.clientX - sx) * 0.5;
+            rx -= (e.clientY - sy) * 0.5;
+            if(ry > 40) ry = 40; if(ry < -80) ry = -80;
+            document.getElementById('scene').style.transform = `rotateX(${rx}deg) rotateY(${ry}deg)`;
+            sx = e.clientX; sy = e.clientY;
+        };
+        window.onmouseup = () => isDown = false;
+
+        function turn(n) {
+            if(n === 1) {
+                const el = document.getElementById('pg1');
+                el.classList.toggle('open');
+                el.style.zIndex = el.classList.contains('open') ? "10" : "3";
+                confetti({ particleCount: 40, spread: 50, origin: {y: 0.8} });
+            } else if(n === 2) {
+                const el = document.getElementById('pg2');
+                el.classList.toggle('open');
+                el.style.zIndex = el.classList.contains('open') ? "11" : "2";
+                if(el.classList.contains('open')) {
+                    confetti({ particleCount: 80, spread: 70 });
+                    if(document.getElementById('type-title').innerHTML === "") type();
+                }
+            }
+        }
+
+        function type() {
+            const t = "Happy Birthday, Sayang!";
+            const m = "semoga diumur ke 25 tahun ini bisa menjadi pribadi yang lebih baik lagi, semoga panjang umur sayangku iso ngancani aku teko awakdewe tuo, rezekine dilancarne, dibarokahi kabeh opo sng dilakoni, semoga diulang tahun berikute iso dirayakne bareng nggeh sayang, aku pengen ng ulang tahunmu iki dan berikute dipenuhi senyumanmu sng manis, gak hanya hari ulang tahunmu tok tapi moga hari harimu dipenuhi senyuman,  I love you so much.. I Miss you! ";
+            let i = 0, j = 0;
+            function step1() { if(i < t.length) { document.getElementById('type-title').innerHTML += t.charAt(i++); setTimeout(step1, 80); } else step2(); }
+            function step2() { if(j < m.length) { document.getElementById('type-msg').innerHTML += m.charAt(j++); setTimeout(step2, 35); } }
+            step1();
+        }
+    </script>
+</body>
+</html>
