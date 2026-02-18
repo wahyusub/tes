@@ -65,17 +65,18 @@
     z-index: 10; 
 }
 
-/* KHUSUS TAMPILAN HP AGAR PAS DI TENGAH */
+/* KHUSUS TAMPILAN HP AGAR DI PINGGIR KANAN */
 @media screen and (max-width: 600px) {
     #scene {
-        /* Naikkan scale dikit biar gak kekecilan, 0.6 atau 0.7 paling pas */
+        /* Scale 0.65 supaya gak terlalu kecil tapi tetap muat */
         transform: rotateX(-10deg) rotateY(-15deg) scale(0.65); 
         
-        /* Trik buat narik ke tengah layar */
         position: absolute;
-        left: 50%;
         top: 50%;
-        /* Geser balik sebesar setengah ukuran buku agar center */
+        /* Kita ganti dari 50% ke nilai yang lebih besar untuk dorong ke kanan */
+        left: 65%; 
+        
+        /* Geser balik sesuai ukuran buku */
         margin-left: -150px; 
         margin-top: -200px;
     }
@@ -229,6 +230,7 @@
     </script>
 </body>
 </html>
+
 
 
 
