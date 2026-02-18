@@ -65,11 +65,19 @@
     z-index: 10; 
 }
 
-/* KHUSUS TAMPILAN HP (BIAR GAK KEGEDEAN) */
+/* KHUSUS TAMPILAN HP AGAR PAS DI TENGAH */
 @media screen and (max-width: 600px) {
     #scene {
-        transform: rotateX(-10deg) rotateY(-15deg) scale(0.4); /* Kita ciutkan ke 70% */
-        margin-top: -20px; /* Geser dikit ke atas biar gak kepotong bawahnya */
+        /* Naikkan scale dikit biar gak kekecilan, 0.6 atau 0.7 paling pas */
+        transform: rotateX(-10deg) rotateY(-15deg) scale(0.65); 
+        
+        /* Trik buat narik ke tengah layar */
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        /* Geser balik sebesar setengah ukuran buku agar center */
+        margin-left: -150px; 
+        margin-top: -200px;
     }
 }
         .book { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; }
@@ -221,6 +229,7 @@
     </script>
 </body>
 </html>
+
 
 
 
