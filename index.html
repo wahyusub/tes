@@ -54,7 +54,17 @@
         }
 
         /* Buku Sharp/Kotak */
-        #scene { width: 300px; height: 400px; transform-style: preserve-3d; transform: rotateX(-10deg) rotateY(-15deg); display: none; position: relative; z-index: 10; }
+       #scene { 
+    width: 80vw;       /* Lebar jadi 80% dari lebar layar HP */
+    max-width: 300px;  /* Tapi maksimal tetep 300px biar gak kegedean di laptop */
+    height: 110vw;      /* Tinggi menyesuaikan proporsi lebar */
+    max-height: 400px; 
+    transform-style: preserve-3d; 
+    transform: rotateX(-10deg) rotateY(-15deg); 
+    display: none; 
+    position: relative; 
+    z-index: 10; 
+}
         .book { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; }
 
         .page {
@@ -204,3 +214,4 @@
     </script>
 </body>
 </html>
+
