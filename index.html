@@ -54,23 +54,21 @@
         }
 
         /* Buku Sharp/Kotak */
-     #scene { 
-    width: 80vw;       /* Lebar jadi 80% dari lebar layar HP */
-    max-width: 300px;  /* Tapi maksimal tetep 300px biar gak kegedean di laptop */
-    height: 110vw;      /* Tinggi menyesuaikan proporsi lebar */
-    max-height: 400px; 
+   #scene { 
+    width: 300px; 
+    height: 400px; 
     transform-style: preserve-3d; 
     transform: rotateX(-10deg) rotateY(-15deg); 
     display: none; 
     position: relative; 
     z-index: 10; 
-    @media screen and (max-width: 600px) {
+}
+
+@media screen and (max-width: 600px) {
     #scene {
-        /* Scale kita naikin dikit ke 0.7 biar pas */
-        transform: rotateX(-10deg) rotateY(-15deg) scale(0.7); 
-        /* Pastikan posisi di tengah layar HP */
-        margin: 0 auto; 
-        left: -15%; /* Geser ke kiri dikit karena rotasi buku makan tempat ke kanan */
+        width: 70vw; /* Pakai 70% lebar layar HP */
+        height: 100vw; /* Tinggi menyesuaikan */
+        transform: rotateX(-10deg) rotateY(-15deg); /* Hapus scale-nya */
     }
 }
      }
@@ -223,6 +221,7 @@
     </script>
 </body>
 </html>
+
 
 
 
